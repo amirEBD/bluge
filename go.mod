@@ -3,14 +3,14 @@ module github.com/blugelabs/bluge
 go 1.13
 
 require (
-	github.com/RoaringBitmap/roaring v0.9.1
+	github.com/RoaringBitmap/roaring v0.9.4
 	github.com/axiomhq/hyperloglog v0.0.0-20191112132149-a4c4c47bc57f
 	github.com/bits-and-blooms/bitset v1.2.0
 	github.com/blevesearch/go-porterstemmer v1.0.3
-	github.com/blevesearch/mmap-go v1.0.2
+	github.com/blevesearch/mmap-go v1.0.3
 	github.com/blevesearch/segment v0.9.0
 	github.com/blevesearch/snowballstem v0.9.0
-	github.com/blevesearch/vellum v1.0.5
+	github.com/blevesearch/vellum v1.0.7
 	github.com/blugelabs/bluge_segment_api v0.2.0
 	github.com/blugelabs/ice v0.2.0
 	github.com/caio/go-tdigest v3.1.0+incompatible
