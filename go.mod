@@ -21,4 +21,4 @@ require (
 	gonum.org/v1/gonum v0.7.0 // indirect
 )
 
-replace github.com/blugelabs/ice v0.2.0 => github.com/zinclabs/ice v0.0.0-20220504041539-ace50a7ef71f
+replace github.com/blugelabs/ice => github.com/zinclabs/ice v0.2.1-0.20220515034015-5e1f80d8e605

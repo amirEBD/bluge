@@ -127,7 +127,7 @@ var ErrMaxSegmentSizeTooLarge = errors.New("option MmaxSegmentSize exceeds the s
 // DefaultMergePlanOptions suggests the default options.
 var DefaultMergePlanOptions = Options{
 	MaxSegmentsPerTier:   10,
-	MaxSegmentSize:       1 << 28, // 256 MB
+	MaxSegmentSize:       1 << 26, // 64 MB
 	TierGrowth:           10.0,
 	SegmentsPerMergeTask: 10,
 	FloorSegmentSize:     4096,
