@@ -444,7 +444,8 @@ func (i *Snapshot) unadornedPostingsIterator(
 }
 
 const blugeSnapshotFormatVersion1 = 1
-const blugeSnapshotFormatVersion = blugeSnapshotFormatVersion1
+const blugeSnapshotFormatVersion2 = 2
+const blugeSnapshotFormatVersion = blugeSnapshotFormatVersion2
 const crcWidth = 4
 
 func (i *Snapshot) WriteTo(w io.Writer, _ chan struct{}) (int64, error) {
@@ -520,6 +521,13 @@ func recordSegment(w io.Writer, snapshot *segmentSnapshot, id uint64, typ string
 	}
 	bytesWritten += sz
 
+	// record segment timestamp
+	docTimeMin, docTimeMax := snapshot.segment.Timestamp()
+	binary.Write(w, binary.BigEndian, uint64(docTimeMin))
+	binary.Write(w, binary.BigEndian, uint64(docTimeMax))
+
+	fmt.Println("recordSegment", snapshot.segment.Type(), snapshot.segment.Version(), docTimeMin, docTimeMax)
+
 	// record deleted bits
 	if snapshot.deleted != nil {
 		var deletedBytes []byte
@@ -590,6 +598,11 @@ func (i *Snapshot) ReadFrom(r io.Reader) (int64, error) {
 		return n + bytesRead, err
 	}
 
+	if snapshotFormatVersion == blugeSnapshotFormatVersion2 {
+		n, err := i.readFromVersion2(br)
+		return n + bytesRead, err
+	}
+
 	return bytesRead, fmt.Errorf("unsupportred snapshot format version: %d", snapshotFormatVersion)
 }
 
@@ -609,7 +622,7 @@ func (i *Snapshot) readFromVersion1(br *bufio.Reader) (int64, error) {
 	bytesRead += int64(sz)
 
 	for j := 0; j < int(numSegments); j++ {
-		segmentBytesRead, ss, err := i.readSegmentSnapshot(br)
+		segmentBytesRead, ss, err := i.readSegmentSnapshot(br, blugeSnapshotFormatVersion1)
 		if err != nil {
 			return bytesRead, err
 		}
@@ -621,7 +634,35 @@ func (i *Snapshot) readFromVersion1(br *bufio.Reader) (int64, error) {
 	return bytesRead, nil
 }
 
-func (i *Snapshot) readSegmentSnapshot(br *bufio.Reader) (bytesRead int64, ss *segmentSnapshot, err error) {
+func (i *Snapshot) readFromVersion2(br *bufio.Reader) (int64, error) {
+	var bytesRead int64
+
+	// read number of segments
+	peek, err := br.Peek(binary.MaxVarintLen64)
+	if err != nil && err != io.EOF {
+		return bytesRead, fmt.Errorf("error peeking snapshot number of segments %d: %w", i.epoch, err)
+	}
+	numSegments, n := binary.Uvarint(peek)
+	sz, err := br.Discard(n)
+	if err != nil {
+		return bytesRead, fmt.Errorf("error reading snapshot number of segments %d: %w", i.epoch, err)
+	}
+	bytesRead += int64(sz)
+
+	for j := 0; j < int(numSegments); j++ {
+		segmentBytesRead, ss, err := i.readSegmentSnapshot(br, blugeSnapshotFormatVersion2)
+		if err != nil {
+			return bytesRead, err
+		}
+		bytesRead += segmentBytesRead
+
+		i.segment = append(i.segment, ss)
+	}
+
+	return bytesRead, nil
+}
+
+func (i *Snapshot) readSegmentSnapshot(br *bufio.Reader, snapshotFormatVersion int) (bytesRead int64, ss *segmentSnapshot, err error) {
 	var sz int
 	var segmentType string
 	// read type
@@ -652,10 +693,21 @@ func (i *Snapshot) readSegmentSnapshot(br *bufio.Reader) (bytesRead int64, ss *s
 	}
 	bytesRead += int64(sz)
 
+	// read segment timestamp
+	var docTimeMin, docTimeMax uint64
+	fmt.Println("snapshotFormatVersion", blugeSnapshotFormatVersion2)
+	if snapshotFormatVersion == blugeSnapshotFormatVersion2 {
+		binary.Read(br, binary.BigEndian, &docTimeMin)
+		binary.Read(br, binary.BigEndian, &docTimeMax)
+	}
+	fmt.Println("snapshotFormatVersion", docTimeMin, docTimeMax)
+
 	ss = &segmentSnapshot{
 		id:             segmentID,
 		segmentType:    segmentType,
 		segmentVersion: segmentVersion,
+		docTimeMin:     int64(docTimeMin),
+		docTimeMax:     int64(docTimeMax),
 	}
 
 	// read size of deleted bitmap
