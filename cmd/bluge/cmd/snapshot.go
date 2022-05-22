@@ -67,7 +67,8 @@ var snapshotCmd = &cobra.Command{
 			if segSnapshot.Deleted() != nil {
 				numDeleted = int(segSnapshot.Deleted().GetCardinality())
 			}
-			fmt.Printf("segment id: %d num_deleted: %d\n", segSnapshot.ID(), numDeleted)
+			docTimeMin, docTimeMax := segSnapshot.Timestamp()
+			fmt.Printf("segment id: %d num_deleted: %d, docTimeMin: %d, docTimeMax: %d\n", segSnapshot.ID(), numDeleted, docTimeMin, docTimeMax)
 		}
 
 		return nil

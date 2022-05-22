@@ -22,6 +22,7 @@ import (
 type SegmentSnapshot interface {
 	ID() uint64
 	Deleted() *roaring.Bitmap
+	Timestamp() (int64, int64)
 }
 
 type segmentSnapshot struct {
@@ -31,6 +32,8 @@ type segmentSnapshot struct {
 	creator        string
 	segmentType    string
 	segmentVersion uint32
+	docTimeMin     int64
+	docTimeMax     int64
 }
 
 func (s *segmentSnapshot) Segment() segment.Segment {
@@ -89,4 +92,8 @@ func (s *segmentSnapshot) Size() (rv int) {
 		rv += int(s.deleted.GetSizeInBytes())
 	}
 	return
+}
+
+func (s *segmentSnapshot) Timestamp() (int64, int64) {
+	return s.docTimeMin, s.docTimeMax
 }

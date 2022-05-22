@@ -18,25 +18,28 @@ import (
 	segment "github.com/blugelabs/bluge_segment_api"
 )
 
-type Document []Field
+type Document struct {
+	fields    []Field
+	timestamp int64
+}
 
 func NewDocument(id string) *Document {
 	return &Document{
-		NewKeywordField(_idField, id).StoreValue().Sortable(),
+		fields: []Field{NewKeywordField(_idField, id).StoreValue().Sortable()},
 	}
 }
 
 func NewDocumentWithIdentifier(id Identifier) *Document {
 	return &Document{
-		NewKeywordFieldBytes(id.Field(), id.Term()).StoreValue().Sortable(),
+		fields: []Field{NewKeywordFieldBytes(id.Field(), id.Term()).StoreValue().Sortable()},
 	}
 }
 
 func (d Document) Size() int {
 	sizeInBytes := sizeOfSlice
 
-	for _, entry := range d {
-		sizeInBytes += entry.Size()
+	for _, field := range d.fields {
+		sizeInBytes += field.Size()
 	}
 
 	return sizeInBytes
@@ -45,11 +48,20 @@ func (d Document) Size() int {
 // ID is an experimental helper method
 // to simplify common use cases
 func (d Document) ID() segment.Term {
-	return Identifier(d[0].Value())
+	return Identifier(d.fields[0].Value())
 }
 
 func (d *Document) AddField(f Field) *Document {
-	*d = append(*d, f)
+	d.fields = append(d.fields, f)
+	return d
+}
+
+func (d *Document) Timestamp() int64 {
+	return d.timestamp
+}
+
+func (d *Document) SetTimestamp(v int64) *Document {
+	d.timestamp = v
 	return d
 }
 
@@ -62,7 +74,7 @@ type FieldConsumer interface {
 
 func (d Document) Analyze() {
 	fieldOffsets := map[string]int{}
-	for _, field := range d {
+	for _, field := range d.fields {
 		if !field.Index() {
 			continue
 		}
@@ -74,7 +86,7 @@ func (d Document) Analyze() {
 		fieldOffsets[field.Name()] = lastPos
 
 		// see if any of the composite fields need this
-		for _, otherField := range d {
+		for _, otherField := range d.fields {
 			if otherField == field {
 				// never include yourself
 				continue
@@ -87,7 +99,7 @@ func (d Document) Analyze() {
 }
 
 func (d Document) EachField(vf segment.VisitField) {
-	for _, field := range d {
+	for _, field := range d.fields {
 		vf(field)
 	}
 }
