@@ -526,8 +526,6 @@ func recordSegment(w io.Writer, snapshot *segmentSnapshot, id uint64, typ string
 	binary.Write(w, binary.BigEndian, uint64(docTimeMin))
 	binary.Write(w, binary.BigEndian, uint64(docTimeMax))
 
-	fmt.Println("recordSegment", snapshot.segment.Type(), snapshot.segment.Version(), docTimeMin, docTimeMax)
-
 	// record deleted bits
 	if snapshot.deleted != nil {
 		var deletedBytes []byte
@@ -695,12 +693,10 @@ func (i *Snapshot) readSegmentSnapshot(br *bufio.Reader, snapshotFormatVersion i
 
 	// read segment timestamp
 	var docTimeMin, docTimeMax uint64
-	fmt.Println("snapshotFormatVersion", blugeSnapshotFormatVersion2)
 	if snapshotFormatVersion == blugeSnapshotFormatVersion2 {
 		binary.Read(br, binary.BigEndian, &docTimeMin)
 		binary.Read(br, binary.BigEndian, &docTimeMax)
 	}
-	fmt.Println("snapshotFormatVersion", docTimeMin, docTimeMax)
 
 	ss = &segmentSnapshot{
 		id:             segmentID,
