@@ -1,6 +1,6 @@
 module github.com/blugelabs/bluge
 
-go 1.13
+go 1.16
 
 require (
 	github.com/RoaringBitmap/roaring v0.9.4
