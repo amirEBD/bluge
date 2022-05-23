@@ -71,8 +71,8 @@ github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljT
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
 github.com/zinclabs/bluge_segment_api v0.2.1-0.20220523030708-2e8f9721fa17 h1:6nZipqKn4MY+Jb3uHtzKvQCbHCWJWVbLy7LwoA9rZq0=
 github.com/zinclabs/bluge_segment_api v0.2.1-0.20220523030708-2e8f9721fa17/go.mod h1:w+BFZs3+UsRmNSvE/Wxl7TSsZQBcso7yEwyYQ4Ovw+M=
-github.com/zinclabs/ice v0.2.1-0.20220523030934-f7c3d139aa14 h1:SdjjwUggvbNxx8l5lp1gCp9+bnjfSxq8eWndJjgUlkU=
-github.com/zinclabs/ice v0.2.1-0.20220523030934-f7c3d139aa14/go.mod h1:b7FG0NtjT+8iOsP57UWzG4V4WlNVrl0VG2YnOk1o82k=
+github.com/zinclabs/ice v0.2.1-0.20220523154843-772e1ae38b48 h1:Ze5gzqhD2rhLsy+OUjr00Q6ZseJwcq8/Ku5JSNDnZe0=
+github.com/zinclabs/ice v0.2.1-0.20220523154843-772e1ae38b48/go.mod h1:b7FG0NtjT+8iOsP57UWzG4V4WlNVrl0VG2YnOk1o82k=
 golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
