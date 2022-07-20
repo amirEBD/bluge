@@ -202,3 +202,4 @@ run:
     - internal/cache
     - internal/renameio
     - internal/robustio
+  timeout: 5m
