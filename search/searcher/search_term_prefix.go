@@ -22,9 +22,9 @@ func NewTermPrefixSearcher(indexReader search.Reader, prefix, field string,
 	boost float64, scorer search.Scorer, compScorer search.CompositeScorer,
 	options search.SearcherOptions) (search.Searcher, error) {
 	// find the terms with this prefix
-	kBeg := []byte(prefix)
-	kEnd := incrementBytes(kBeg)
-	fieldDict, err := indexReader.DictionaryIterator(field, nil, kBeg, kEnd)
+	byteBeg := []byte(prefix)
+	byteEnd := incrementBytes(byteBeg)
+	fieldDict, err := indexReader.DictionaryIterator(field, nil, byteBeg, byteEnd)
 	if err != nil {
 		return nil, err
 	}

@@ -57,7 +57,7 @@ func TestPhraseSearch(t *testing.T) {
 	}
 
 	for testIndex, test := range tests {
-		defer func() {
+		defer func() { //nolint:gocritic
 			err := test.searcher.Close()
 			if err != nil {
 				t.Fatal(err)

@@ -15,16 +15,14 @@
 package bluge
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
-
-	"github.com/blugelabs/bluge/index"
-
-	"github.com/blugelabs/bluge/search"
-	"github.com/blugelabs/bluge/search/similarity"
 
 	"github.com/blugelabs/bluge/analysis"
 	"github.com/blugelabs/bluge/analysis/analyzer"
+	"github.com/blugelabs/bluge/index"
+	"github.com/blugelabs/bluge/search"
+	"github.com/blugelabs/bluge/search/similarity"
 )
 
 type Config struct {
@@ -101,7 +99,7 @@ func DefaultConfigWithIndexConfig(indexConfig index.Config) Config {
 
 func defaultConfig(indexConfig index.Config) Config {
 	rv := Config{
-		Logger:                log.New(ioutil.Discard, "bluge", log.LstdFlags),
+		Logger:                log.New(io.Discard, "bluge", log.LstdFlags),
 		DefaultSearchField:    "_all",
 		DefaultSearchAnalyzer: analyzer.NewStandardAnalyzer(),
 		DefaultSimilarity:     similarity.NewBM25Similarity(),

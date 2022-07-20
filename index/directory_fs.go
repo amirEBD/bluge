@@ -17,7 +17,6 @@ package index
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -85,7 +84,7 @@ func (d *FileSystemDirectory) Setup(readOnly bool) error {
 }
 
 func (d *FileSystemDirectory) List(kind string) ([]uint64, error) {
-	dirEntries, err := ioutil.ReadDir(d.path)
+	dirEntries, err := os.ReadDir(d.path)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +200,7 @@ func (d *FileSystemDirectory) Lock() error {
 	if err != nil {
 		return fmt.Errorf("error truncating pid file: %w", err)
 	}
-	_, err = d.pid.File().Write([]byte(fmt.Sprintf("%d\n", os.Getpid())))
+	_, err = fmt.Fprintf(d.pid.File(), "%d\n", os.Getpid())
 	if err != nil {
 		return fmt.Errorf("error writing pid: %w", err)
 	}
@@ -227,12 +226,14 @@ func (d *FileSystemDirectory) Unlock() error {
 }
 
 func (d *FileSystemDirectory) Stats() (numFilesOnDisk, numBytesUsedDisk uint64) {
-	fileInfos, err := ioutil.ReadDir(d.path)
+	fs, err := os.ReadDir(d.path)
 	if err == nil {
-		for _, fileInfo := range fileInfos {
-			if !fileInfo.IsDir() {
+		for _, f := range fs {
+			if !f.IsDir() {
 				numFilesOnDisk++
-				numBytesUsedDisk += uint64(fileInfo.Size())
+				if info, err := f.Info(); err == nil {
+					numBytesUsedDisk += uint64(info.Size())
+				}
 			}
 		}
 	}

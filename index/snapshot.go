@@ -523,15 +523,27 @@ func recordSegment(w io.Writer, snapshot *segmentSnapshot, id uint64, typ string
 	bytesWritten += sz
 
 	// record segment size
-	binary.Write(w, binary.BigEndian, uint64(snapshot.segment.Size()))
+	err = binary.Write(w, binary.BigEndian, uint64(snapshot.segment.Size()))
+	if err != nil {
+		return bytesWritten, err
+	}
 
 	// record segment docNum
-	binary.Write(w, binary.BigEndian, uint64(snapshot.segment.Count()))
+	err = binary.Write(w, binary.BigEndian, snapshot.segment.Count())
+	if err != nil {
+		return bytesWritten, err
+	}
 
 	// record segment timestamp
 	docTimeMin, docTimeMax := snapshot.segment.Timestamp()
-	binary.Write(w, binary.BigEndian, uint64(docTimeMin))
-	binary.Write(w, binary.BigEndian, uint64(docTimeMax))
+	err = binary.Write(w, binary.BigEndian, uint64(docTimeMin))
+	if err != nil {
+		return bytesWritten, err
+	}
+	err = binary.Write(w, binary.BigEndian, uint64(docTimeMax))
+	if err != nil {
+		return bytesWritten, err
+	}
 
 	// record deleted bits
 	if snapshot.deleted != nil {
@@ -685,24 +697,24 @@ func (i *Snapshot) readSegmentSnapshot(br *bufio.Reader, snapshotFormatVersion i
 	case blugeSnapshotFormatVersion1:
 	case blugeSnapshotFormatVersion2:
 		// read segment timestamp
-		binary.Read(br, binary.BigEndian, &docTimeMin)
-		binary.Read(br, binary.BigEndian, &docTimeMax)
+		_ = binary.Read(br, binary.BigEndian, &docTimeMin)
+		_ = binary.Read(br, binary.BigEndian, &docTimeMax)
 	case blugeSnapshotFormatVersion3:
 		// read segment size
-		binary.Read(br, binary.BigEndian, &segmentSize)
+		_ = binary.Read(br, binary.BigEndian, &segmentSize)
 		// read segment docNum
-		binary.Read(br, binary.BigEndian, &docNum)
+		_ = binary.Read(br, binary.BigEndian, &docNum)
 		// read segment timestamp
-		binary.Read(br, binary.BigEndian, &docTimeMin)
-		binary.Read(br, binary.BigEndian, &docTimeMax)
+		_ = binary.Read(br, binary.BigEndian, &docTimeMin)
+		_ = binary.Read(br, binary.BigEndian, &docTimeMax)
 	}
 
 	ss = &segmentSnapshot{
 		id:             segmentID,
 		segmentType:    segmentType,
 		segmentVersion: segmentVersion,
-		segmentSize:    uint64(segmentSize),
-		docNum:         uint64(docNum),
+		segmentSize:    segmentSize,
+		docNum:         docNum,
 		docTimeMin:     int64(docTimeMin),
 		docTimeMax:     int64(docTimeMax),
 	}

@@ -18,13 +18,11 @@ import (
 	"strconv"
 	"time"
 
-	segment "github.com/blugelabs/bluge_segment_api"
-
-	"github.com/blugelabs/bluge/analysis/analyzer"
-
 	"github.com/blugelabs/bluge/analysis"
+	"github.com/blugelabs/bluge/analysis/analyzer"
 	"github.com/blugelabs/bluge/numeric"
 	"github.com/blugelabs/bluge/numeric/geo"
+	segment "github.com/blugelabs/bluge_segment_api"
 )
 
 type FieldOptions int
@@ -257,8 +255,7 @@ func (n *numericAnalyzer) Analyze(input []byte) analysis.TokenStream {
 		},
 	}
 
-	switch n.tokenType {
-	case analysis.Numeric:
+	if n.tokenType == analysis.Numeric {
 		if origVal, err := DecodeNumericFloat64(input); err == nil {
 			origStr := strconv.FormatFloat(origVal, 'f', -1, 64)
 			tokens = append(tokens, &analysis.Token{

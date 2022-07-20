@@ -139,7 +139,7 @@ func ParseSortOrderStrings(in []string) SortOrder {
 }
 
 var highTerm = bytes.Repeat([]byte{0xff}, 10)
-var lowTerm []byte = []byte{0x00}
+var lowTerm = []byte{0x00}
 
 type sortFirstLast struct {
 	desc  *bool

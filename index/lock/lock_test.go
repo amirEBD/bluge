@@ -193,7 +193,7 @@ func createTestPath(t *testing.T) (path string, cleanup func()) {
 		t.Fatalf("error creating temp dir: %v", err)
 	}
 	path = filepath.Join(tmpDir, "file")
-	err = ioutil.WriteFile(path, []byte("file"), 0600)
+	err = os.WriteFile(path, []byte("file"), 0600)
 	if err != nil {
 		t.Fatalf("error creatig temp file '%s': %v", path, err)
 	}

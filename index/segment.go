@@ -56,11 +56,11 @@ func (s *segmentSnapshot) FullSize() int64 {
 	return int64(s.segment.Count())
 }
 
-func (s segmentSnapshot) LiveSize() int64 {
+func (s *segmentSnapshot) LiveSize() int64 {
 	return int64(s.Count())
 }
 
-func (s segmentSnapshot) Bytes() int64 {
+func (s *segmentSnapshot) Bytes() int64 {
 	n := int64(s.segmentSize)
 	if n == 0 {
 		n = int64(s.segment.Size())
@@ -114,6 +114,6 @@ func (s *segmentSnapshot) SegmentSize() uint64 {
 	return s.segmentSize
 }
 
-func (s *segmentSnapshot) Timestamp() (int64, int64) {
+func (s *segmentSnapshot) Timestamp() (int64, int64) { //nolint:gocritic
 	return s.docTimeMin, s.docTimeMax
 }
