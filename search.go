@@ -207,9 +207,12 @@ func (s *TopNSearch) CollectorConfig(aggs search.Aggregations) *collector.Config
 	}
 
 	// add fields needed by aggregations
-	f := aggs.Fields()
-	neededFields := make([]string, len(f))
-	copy(neededFields, f)
+	aggregationFields := aggs.Fields()
+	sortFields := cc.Sort.Fields()
+	neededFields := make([]string, 0, len(aggregationFields)+len(sortFields))
+	neededFields = append(neededFields, aggregationFields...)
+	neededFields = append(neededFields, sortFields...)
+
 	// filter repeated field
 	if len(neededFields) > 1 {
 		store := make(map[string]struct{}, len(neededFields))
